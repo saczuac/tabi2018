@@ -7,11 +7,16 @@ class PollSerializer(serializers.ModelSerializer):
     university_school = serializers.SerializerMethodField()
 
     def get_university_group(self, obj):
-        return self.university_group.name
+        return obj.university_group.name
 
     def get_university_school(self, obj):
-        return self.university_school.name
+        return obj.university_school.name
 
     class Meta:
         model = Poll
-        fields = '__all__'
+        fields = [
+            'university_group',
+            'university_school',
+            'center_votes',
+            'cloister_votes'
+        ]

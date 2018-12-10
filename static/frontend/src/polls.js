@@ -22,7 +22,7 @@ const PollAPIClient = {
     },
 
     getPolls: _ => {
-        const url = `/api/polls/list`;
+        const url = `/api/polls/`;
 
         return fetch(url, {
                     credentials: 'same-origin',
