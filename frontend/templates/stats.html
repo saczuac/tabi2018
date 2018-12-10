@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DSD 2018 - Listado </title>
+	<!-- Bootstrap CDN -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Optional theme -->
+
+	<link rel="stylesheet" type="text/css" href="/static/frontend/css/index.css">
+</head>
+<body>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <span class="navbar-brand" href="#">
+	        DSD
+	      </span>
+
+	    </div>
+      <div class="navbar-right">
+      	<form class="navbar-form navbar-left" method="POST" action="/logout/">
+      		 {% csrf_token %}
+  	  		<button type="submit" class="btn btn-default navbar-btn">Sign Out</button>
+      	</form>
+      	
+      </div>
+	  </div>
+
+	</nav>
+
+	<div id="product-list"  class="row">
+
+	</div>
+
+	<script
+	  src="https://code.jquery.com/jquery-3.3.1.min.js"
+	  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	  crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="/static/frontend/build/index.js"></script>
+</body>
+</html>
