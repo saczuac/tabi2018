@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 
-from .models import UniversitySchool, UniversityGroup, Poll
+from .models import UniversitySchool, UniversityGroup, Poll, PollYear
 
 from django.db.utils import IntegrityError
 
@@ -23,18 +23,24 @@ class PollImporter:
         for url in self.urls:
             self.import_poll_url(url.get('name'), url.get('year'))
 
+    def persist_year(self, year):
+        poll_year, created = PollYear.objects.get_or_create(year=year)
+        return poll_year
+
     def import_poll_url(self, url, year):
         #  Given an URL of a poll, imports the data
         scrap_detail, status = self.get_data(url)
+
+        poll_year = self.persist_year(year)
 
         polls_table = scrap_detail.find("div", class_="body").find_all("table")
 
         del polls_table[0]  # Remove first table (Referencias)
 
         for poll_html in polls_table:
-            self.import_poll(poll_html, year)
+            self.import_poll(poll_html, poll_year)
 
-    def import_poll(self, poll_html, year):
+    def import_poll(self, poll_html, poll_year):
         votes = poll_html.find_all("tr")
 
         university_school = self.import_university_school(votes[0])
@@ -69,11 +75,11 @@ class PollImporter:
             print("Claustro -> {0}, Centro -> {1}, Año: {2}".format(
                 cloister_votes,
                 center_votes,
-                year
+                poll_year.year
             ))
 
             self.persist_poll(
-                year, center_votes,
+                poll_year, center_votes,
                 cloister_votes, university_group,
                 university_school
             )

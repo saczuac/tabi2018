@@ -10,6 +10,10 @@ class PollSerializer(serializers.ModelSerializer):
     longitude = serializers.SerializerMethodField()
     latitude = serializers.SerializerMethodField()
     political_block = serializers.SerializerMethodField()
+    year = serializers.SerializerMethodField()
+
+    def get_year(self, obj):
+        return obj.year.year
 
     def get_university_group(self, obj):
         return obj.university_group.name

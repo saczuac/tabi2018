@@ -11730,20 +11730,45 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var generalPolls = [];
 
 (0, _jquery2.default)("#graph1-select").on('change', function () {
-	console.log(parseInt(this.value));
-	onSelectYear(this.value);
+	drawGeneralPollsFromYear(this.value);
 });
 
-var onSelectYear = function onSelectYear(year) {
-	drawGeneralPollsFromYear(year);
+(0, _jquery2.default)("#graph2-select-year").on('change', function () {
+	drawSelectUniversitiesGroup(this.value);
+});
+
+var drawSelectUniversitiesGroup = function drawSelectUniversitiesGroup(year) {
+	(0, _jquery2.default)('#graph2-select-university').empty();
+
+	var generalPollYear = getPollsFromYear(year);
+
+	var universitiesGroup = getUniversitiesGroup(generalPollYear);
+
+	for (var universityGroup in universitiesGroup) {
+		(0, _jquery2.default)('#graph2-select-university').append('<option value="' + universityGroup + '">' + universityGroup + '</option>');
+	}
 };
 
-var drawGeneralPollsFromYear = function drawGeneralPollsFromYear(year) {
-	var generalPollYear = generalPolls.map(function (poll) {
+var getUniversitiesGroup = function getUniversitiesGroup(poll) {
+	var universitiesGroup = [];
+
+	poll.forEach(function (el) {
+		return universitiesGroup.indexOf(el.university_group) === -1 ? universitiesGroup.push(el.university_group) : null;
+	});
+
+	return universitiesGroup;
+};
+
+var getPollsFromYear = function getPollsFromYear(year) {
+	return generalPolls.map(function (poll) {
 		if (poll.year == year) return { university_group: poll.university_group, y: poll.center_votes };
 	}).filter(function (e) {
 		return e != null;
 	});
+};
+
+var drawGeneralPollsFromYear = function drawGeneralPollsFromYear(year) {
+	var generalPollYear = getPollsFromYear(year);
 
 	var groupedPollYear = groupBy(generalPollYear, 'university_group');
 

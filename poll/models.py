@@ -30,6 +30,19 @@ class UniversityGroup(models.Model):
         return "{}".format(self.name)
 
 
+# Dimension Año
+class PollYear(models.Model):
+    year = models.IntegerField(_('Año'))
+
+    class Meta:
+        verbose_name = "PollYear"
+        verbose_name_plural = "PollYears"
+        db_table = 'd_year'
+
+    def __str__(self):
+        return "{}".format(self.year)
+
+
 # Tabla de Hechos Votos
 class Poll(models.Model):
     university_group = models.ForeignKey(
@@ -44,7 +57,11 @@ class Poll(models.Model):
         on_delete=models.PROTECT
     )
 
-    year = models.IntegerField(_('Año'))
+    year = models.ForeignKey(
+        PollYear,
+        verbose_name=_('Año'),
+        on_delete=models.PROTECT
+    )
 
     center_votes = models.IntegerField(_('Votos por centro'))
     cloister_votes = models.IntegerField(_('Votos por claustro'))
@@ -60,5 +77,5 @@ class Poll(models.Model):
             self.university_group.name,
             self.center_votes,
             self.cloister_votes,
-            self.year
+            self.year.year
         )

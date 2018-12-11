@@ -12,20 +12,45 @@ Exporting(Highcharts);
 let generalPolls = [];
 
 $("#graph1-select").on('change', function() {
-	console.log(parseInt(this.value))
-  	onSelectYear(this.value)
+	drawGeneralPollsFromYear(this.value)
 });
 
-const onSelectYear = year => {
-	drawGeneralPollsFromYear(year)
+$("#graph2-select-year").on('change', function() {
+	drawSelectUniversitiesGroup(this.value);
+});
+
+const drawSelectUniversitiesGroup = year => {
+	$('#graph2-select-university').empty();
+
+	const generalPollYear = getPollsFromYear(year);
+
+	const universitiesGroup = getUniversitiesGroup(generalPollYear);
+
+	for (var universityGroup in universitiesGroup) {
+		$('#graph2-select-university').append(`<option value="${universityGroup}">${universityGroup}</option>`);
+	}
 }
 
-const drawGeneralPollsFromYear = year => {
-  let generalPollYear = generalPolls.map(poll => {
-  	if (poll.year == year) return ({ university_group: poll.university_group, y: poll.center_votes })
-  }).filter(e => e != null);
+const getUniversitiesGroup = poll => {
+	var universitiesGroup = [];
 
-  let groupedPollYear = groupBy(generalPollYear, 'university_group');
+	poll.forEach(el => universitiesGroup.indexOf(el.university_group) === -1 ? universitiesGroup.push(el.university_group) : null)
+
+	return universitiesGroup;
+}
+
+
+const getPollsFromYear = year => {
+	return generalPolls.map(poll => {
+		if (poll.year == year) return ({ university_group: poll.university_group, y: poll.center_votes })
+	}).filter(e => e != null);
+}
+
+
+const drawGeneralPollsFromYear = year => {
+  const generalPollYear = getPollsFromYear(year);
+
+  const groupedPollYear = groupBy(generalPollYear, 'university_group');
 
   drawGeneralPoll(groupedPollYear, `Elecciones Estudiantiles ${year}`, "graph1-chart")
 }
