@@ -126,6 +126,13 @@ DATABASE_ROUTERS = ['tabi.db_router.PollRouter', ]
 
 django_heroku.settings(locals())
 
+
+SCRAPING_URLS = [
+    "https://unlp.edu.ar/elecciones/eleccionesunlp-los-estudiantes-eligen-a-sus-representantes-8632",
+    "https://unlp.edu.ar/elecciones/resultado-de-la-eleccion-del-claustro-de-estudiantes-2018-11036"
+]
+
+
 try:
     from tabi.local_settings import *
 except ImportError:
