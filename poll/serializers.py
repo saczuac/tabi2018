@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Poll
+from .models import Poll, UniversitySchool
 
 from university.models import University, UniversityGroupBlock
+
+
+class UniversitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UniversitySchool
+        fields = '__all__'
 
 
 class PollSerializer(serializers.ModelSerializer):

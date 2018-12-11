@@ -10,25 +10,50 @@ import Exporting from 'highcharts/modules/exporting';
 Exporting(Highcharts);
 
 let generalPolls = [];
+let generalUniversities = [];
+
+let selectedYear = null;
+let selectedUniversity = null;
+let selected2University = null;
+
 
 $("#graph1-select").on('change', function() {
 	drawGeneralPollsFromYear(this.value)
 });
 
 $("#graph2-select-year").on('change', function() {
-	drawSelectUniversitiesGroup(this.value);
+	selectedYear = this.value;
+
+	drawSecondGraph();
 });
 
-const drawSelectUniversitiesGroup = year => {
-	$('#graph2-select-university').empty();
+$("#graph2-select-university").on('change', function() {
+	selectedUniversity = this.value;
 
-	const generalPollYear = getPollsFromYear(year);
+	drawSecondGraph();
+});
 
-	const universitiesGroup = getUniversitiesGroup(generalPollYear);
+$("#graph3-select-university").on('change', function() {
+	selected2University = this.value;
 
-	for (var universityGroup in universitiesGroup) {
-		$('#graph2-select-university').append(`<option value="${universityGroup}">${universityGroup}</option>`);
-	}
+	drawStackChart(generalPolls, selected2University);
+});
+
+const drawUniversitiesSelect = (universities, select='#graph2-select-university') => {
+	universities.forEach(university => {
+		$(select).append(`<option value="${university.name}">${university.name}</option>`);
+	})
+}
+
+const drawSecondGraph = _ => {
+	if (!selectedUniversity || !selectedYear) return;
+
+	const notGeneralPollYear = getPollsFromYear(selectedYear, selectedUniversity);
+
+	const groupedPollYear = groupBy(notGeneralPollYear, 'university_group');
+
+	drawGeneralPoll(groupedPollYear, `Elecciones Estudiantiles ${selectedYear} - ${selectedUniversity}`, "graph2-chart")
+
 }
 
 const getUniversitiesGroup = poll => {
@@ -40,8 +65,13 @@ const getUniversitiesGroup = poll => {
 }
 
 
-const getPollsFromYear = year => {
+const getPollsFromYear = (year, university=null) => {
 	return generalPolls.map(poll => {
+		if (university) {
+			if (poll.year == year && poll.university_school == university) return ({ university_group: poll.university_group, y: poll.center_votes });
+			return null;
+		}
+
 		if (poll.year == year) return ({ university_group: poll.university_group, y: poll.center_votes })
 	}).filter(e => e != null);
 }
@@ -121,9 +151,103 @@ const fetchPolls = _ => {
   })
 }
 
+const fetchUniversities = _ => {
+  PollAPIClient.getUniversities().then(universities => {
+      console.log(universities, 'UNIVERSIDADES DESDE API');
+
+      drawUniversitiesSelect(universities);
+      drawUniversitiesSelect(universities, '#graph3-select-university');
+
+      if (universities) {
+      	generalUniversities = universities;
+      }
+  })
+}
+
+
+const drawStackChart = (polls, university)  => {
+	const years = [2012, 2013, 2014, 2015, 2016, 2017, 2018];
+
+	const pollsPerYear = [];
+
+	const pollsPerYearObj = {}
+
+	years.forEach(year => {
+		let generalPollYear = getPollsFromYear(year, university);
+
+		generalPollYear.forEach(pollYear => {
+			if (!pollsPerYearObj[pollYear.university_group]) pollsPerYearObj[pollYear.university_group] = [];
+
+			pollsPerYearObj[pollYear.university_group].push(pollYear.y)
+		})
+	});
+
+
+	Object.keys(pollsPerYearObj).forEach(group => {
+		pollsPerYear.push({
+			name: group,
+			data: pollsPerYearObj[group]
+		})
+	})
+
+	stackChart(pollsPerYear, `Evolución cantidad de votos por año por agrupación en ${university}`, 'graph3-chart')
+}
+
+
+const stackChart = (data, title, container) => {
+	Highcharts.chart(container, {
+
+	    title: {
+	        text: title
+	    },
+
+	    subtitle: {
+	        text: ''
+	    },
+
+	    yAxis: {
+	        title: {
+	            text: 'Cantidad de votos'
+	        }
+	    },
+	    legend: {
+	        layout: 'vertical',
+	        align: 'right',
+	        verticalAlign: 'middle'
+	    },
+
+	    plotOptions: {
+	        series: {
+	            label: {
+	                connectorAllowed: false
+	            },
+	            pointStart: 2012
+	        }
+	    },
+
+	    series: data,
+	    responsive: {
+	        rules: [{
+	            condition: {
+	                maxWidth: 500
+	            },
+	            chartOptions: {
+	                legend: {
+	                    layout: 'horizontal',
+	                    align: 'center',
+	                    verticalAlign: 'bottom'
+	                }
+	            }
+	        }]
+	    }
+
+	});
+}
+
 // FETCH PRODUCTS IF LIST
 if (window.location.pathname == '/') {
   fetchPolls();
+  fetchUniversities();
 } else {
   // Something else
 }

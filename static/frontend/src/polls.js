@@ -5,6 +5,8 @@ import Config from './config';
 const PollAPIClient = {
     polls: null,
 
+    universities: null,
+
     getCookie: name => {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -39,8 +41,27 @@ const PollAPIClient = {
                     return polls;
                 })
                 .catch(e => false);
-    }
+    },
 
+    getUniversities: _ => {
+        const url = `/api/polls/universities/`;
+
+        return fetch(url, {
+                    credentials: 'same-origin',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-csrftoken': PollAPIClient.getCookie('csrftoken')
+                    },
+                })
+                .then(response => {
+                    if (response.status === 200) return response.json();
+                })
+                .then(universities => {
+                    PollAPIClient.universities = universities;
+                    return universities;
+                })
+                .catch(e => false);
+    },
 };
 
 export default PollAPIClient;

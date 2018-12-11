@@ -11728,25 +11728,50 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 (0, _exporting2.default)(_highcharts2.default);
 
 var generalPolls = [];
+var generalUniversities = [];
+
+var selectedYear = null;
+var selectedUniversity = null;
+var selected2University = null;
 
 (0, _jquery2.default)("#graph1-select").on('change', function () {
 	drawGeneralPollsFromYear(this.value);
 });
 
 (0, _jquery2.default)("#graph2-select-year").on('change', function () {
-	drawSelectUniversitiesGroup(this.value);
+	selectedYear = this.value;
+
+	drawSecondGraph();
 });
 
-var drawSelectUniversitiesGroup = function drawSelectUniversitiesGroup(year) {
-	(0, _jquery2.default)('#graph2-select-university').empty();
+(0, _jquery2.default)("#graph2-select-university").on('change', function () {
+	selectedUniversity = this.value;
 
-	var generalPollYear = getPollsFromYear(year);
+	drawSecondGraph();
+});
 
-	var universitiesGroup = getUniversitiesGroup(generalPollYear);
+(0, _jquery2.default)("#graph3-select-university").on('change', function () {
+	selected2University = this.value;
 
-	for (var universityGroup in universitiesGroup) {
-		(0, _jquery2.default)('#graph2-select-university').append('<option value="' + universityGroup + '">' + universityGroup + '</option>');
-	}
+	drawStackChart(generalPolls, selected2University);
+});
+
+var drawUniversitiesSelect = function drawUniversitiesSelect(universities) {
+	var select = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '#graph2-select-university';
+
+	universities.forEach(function (university) {
+		(0, _jquery2.default)(select).append('<option value="' + university.name + '">' + university.name + '</option>');
+	});
+};
+
+var drawSecondGraph = function drawSecondGraph(_) {
+	if (!selectedUniversity || !selectedYear) return;
+
+	var notGeneralPollYear = getPollsFromYear(selectedYear, selectedUniversity);
+
+	var groupedPollYear = groupBy(notGeneralPollYear, 'university_group');
+
+	drawGeneralPoll(groupedPollYear, 'Elecciones Estudiantiles ' + selectedYear + ' - ' + selectedUniversity, "graph2-chart");
 };
 
 var getUniversitiesGroup = function getUniversitiesGroup(poll) {
@@ -11760,7 +11785,14 @@ var getUniversitiesGroup = function getUniversitiesGroup(poll) {
 };
 
 var getPollsFromYear = function getPollsFromYear(year) {
+	var university = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
 	return generalPolls.map(function (poll) {
+		if (university) {
+			if (poll.year == year && poll.university_school == university) return { university_group: poll.university_group, y: poll.center_votes };
+			return null;
+		}
+
 		if (poll.year == year) return { university_group: poll.university_group, y: poll.center_votes };
 	}).filter(function (e) {
 		return e != null;
@@ -11842,9 +11874,100 @@ var fetchPolls = function fetchPolls(_) {
 	});
 };
 
+var fetchUniversities = function fetchUniversities(_) {
+	_polls2.default.getUniversities().then(function (universities) {
+		console.log(universities, 'UNIVERSIDADES DESDE API');
+
+		drawUniversitiesSelect(universities);
+		drawUniversitiesSelect(universities, '#graph3-select-university');
+
+		if (universities) {
+			generalUniversities = universities;
+		}
+	});
+};
+
+var drawStackChart = function drawStackChart(polls, university) {
+	var years = [2012, 2013, 2014, 2015, 2016, 2017, 2018];
+
+	var pollsPerYear = [];
+
+	var pollsPerYearObj = {};
+
+	years.forEach(function (year) {
+		var generalPollYear = getPollsFromYear(year, university);
+
+		generalPollYear.forEach(function (pollYear) {
+			if (!pollsPerYearObj[pollYear.university_group]) pollsPerYearObj[pollYear.university_group] = [];
+
+			pollsPerYearObj[pollYear.university_group].push(pollYear.y);
+		});
+	});
+
+	Object.keys(pollsPerYearObj).forEach(function (group) {
+		pollsPerYear.push({
+			name: group,
+			data: pollsPerYearObj[group]
+		});
+	});
+
+	stackChart(pollsPerYear, 'Evoluci\xF3n cantidad de votos por a\xF1o por agrupaci\xF3n en ' + university, 'graph3-chart');
+};
+
+var stackChart = function stackChart(data, title, container) {
+	_highcharts2.default.chart(container, {
+
+		title: {
+			text: title
+		},
+
+		subtitle: {
+			text: ''
+		},
+
+		yAxis: {
+			title: {
+				text: 'Cantidad de votos'
+			}
+		},
+		legend: {
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'middle'
+		},
+
+		plotOptions: {
+			series: {
+				label: {
+					connectorAllowed: false
+				},
+				pointStart: 2012
+			}
+		},
+
+		series: data,
+		responsive: {
+			rules: [{
+				condition: {
+					maxWidth: 500
+				},
+				chartOptions: {
+					legend: {
+						layout: 'horizontal',
+						align: 'center',
+						verticalAlign: 'bottom'
+					}
+				}
+			}]
+		}
+
+	});
+};
+
 // FETCH PRODUCTS IF LIST
 if (window.location.pathname == '/') {
 	fetchPolls();
+	fetchUniversities();
 } else {
 	// Something else
 }
@@ -11866,6 +11989,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var PollAPIClient = {
     polls: null,
+
+    universities: null,
 
     getCookie: function getCookie(name) {
         var cookieValue = null;
@@ -11900,8 +12025,26 @@ var PollAPIClient = {
         }).catch(function (e) {
             return false;
         });
-    }
+    },
 
+    getUniversities: function getUniversities(_) {
+        var url = '/api/polls/universities/';
+
+        return fetch(url, {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrftoken': PollAPIClient.getCookie('csrftoken')
+            }
+        }).then(function (response) {
+            if (response.status === 200) return response.json();
+        }).then(function (universities) {
+            PollAPIClient.universities = universities;
+            return universities;
+        }).catch(function (e) {
+            return false;
+        });
+    }
 };
 
 exports.default = PollAPIClient;
