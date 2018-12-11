@@ -135,6 +135,10 @@ SCRAPING_URLS = [
     {
         "name": "https://unlp.edu.ar/elecciones/resultado-de-la-eleccion-del-claustro-de-estudiantes-2018-11036",
         "year": 2018
+    },
+    {
+        "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2016_resultados-3991",
+        "year": 2016
     }
 ]
 

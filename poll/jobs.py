@@ -46,7 +46,11 @@ class PollImporter:
         for vote in votes:
             vote_row = vote.find_all("p")
 
-            university_group = self.import_university_group(vote_row[0])
+            try:
+                university_group = self.import_university_group(vote_row[0])
+            except Exception:
+                tds_html = vote.find_all("td")
+                university_group = self.import_university_group(tds_html[0])
 
             try:
                 cloister_votes = vote_row[1].text.strip()
