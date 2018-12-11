@@ -156,7 +156,7 @@ SCRAPING_URLS = [
     }
 ]
 
-django_heroku.settings(locals(), databases=False)
+django_heroku.settings(locals())
 
 
 try:
