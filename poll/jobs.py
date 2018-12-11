@@ -138,4 +138,7 @@ class PollImporter:
                 university_school=university_school,
                 university_group=university_group
             )
+        except Exception as e:
+            print("Error persisting Poll: {}".format(str(e)))
+            return None
         return poll

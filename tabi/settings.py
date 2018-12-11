@@ -139,6 +139,22 @@ SCRAPING_URLS = [
     {
         "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2016_resultados-3991",
         "year": 2016
+    },
+    {
+        "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2015_resultados-3989",
+        "year": 2015
+    },
+    {
+        "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2014-3987",
+        "year": 2014
+    },
+    {
+        "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2013-3986",
+        "year": 2013
+    },
+    {
+        "name": "https://unlp.edu.ar/elecciones/elecciones_estudiantiles_2012-3984",
+        "year": 2012
     }
 ]
 
