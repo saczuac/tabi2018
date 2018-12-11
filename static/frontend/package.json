@@ -49,6 +49,8 @@
     "gulp-appfy-tasks": "^3.5.1"
   },
   "dependencies": {
+    "d3": "^5.7.0",
+    "highcharts": "^7.0.0",
     "hyperscript": "^2.0.2",
     "jquery": "^3.2.1",
     "whatwg-fetch": "^1.0.0"
