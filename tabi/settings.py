@@ -124,8 +124,6 @@ REST_FRAMEWORK = {
 
 DATABASE_ROUTERS = ['tabi.db_router.PollRouter', ]
 
-django_heroku.settings(locals())
-
 
 SCRAPING_URLS = [
     {
@@ -157,6 +155,8 @@ SCRAPING_URLS = [
         "year": 2012
     }
 ]
+
+django_heroku.settings(locals(), databases=False)
 
 
 try:
