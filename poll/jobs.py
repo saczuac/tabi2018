@@ -8,6 +8,88 @@ from django.db.utils import IntegrityError
 from bs4 import BeautifulSoup
 
 
+UNIVERSITY_SCHOOL = {
+    'Facultad de Periodismo y Comunicación': 'Facultad de Periodismo y Comunicación Social',
+    'Facultad de Cs. Jurídicas y': 'Facultad de Ciencias Jurídicas y Sociales',
+    'Facultad de Arquitectura y': 'Facultad de Arquitectura y Urbanismo',
+    'Facultad de Humanidades y Cs. de la': 'Facultad de Humanidades y Ciencias de la Educación',
+    'Facultad de Cs. Económicas': 'Facultad de Ciencias Económicas',
+    'Facultad de Cs. Astronómicas y': 'Facultad de Ciencias Astronómicas y Geofísicas',
+    'Facultad de Humanidades y Cs. de la Educación': 'Facultad de Humanidades y Ciencias de la Educación',
+    'Facultad de Cs. Médicas': 'Facultad de Ciencias Médicas',
+    'Facultad de Cs. Jurídicas y Sociales': 'Facultad de Ciencias Jurídicas y Sociales',
+    'Facultad de Cs. Exactas': 'Facultad de Ciencias Exactas',
+    'Facultad de Cs. Astronómicas y Geofísicas': 'Facultad de Ciencias Astronómicas y Geofísicas',
+    'Facultad de Cs. Agrarias y Forestales': 'Facultad de Ciencias Agrarias y Forestales',
+    'Facultad de Trabajo': 'Facultad de Trabajo Social',
+    'Facultad de Periodismo y Comunicación Social    ': 'Facultad de Periodismo y Comunicación Social',
+    'Facultad de Humanidades y Cs. de la Educación  ': 'Facultad de Humanidades y Ciencias de la Educación',
+    'Facultad de Cs. Veterinarias': 'Facultad de Ciencias Veterinarias',
+    'Facultad de Cs. Naturales y': 'Facultad de Ciencias Naturales y Museo',
+    'Facultad de Cs. Jurídicas y Sociales  ': 'Facultad de Ciencias Jurídicas y Sociales',
+    'Facultad de Cs.': 'Facultad de Ciencias Económicas',
+    'Facultad de Cs. Económicas    ': 'Facultad de Ciencias Económicas',
+    'Facultad de Cs. Astronómicas y Geofísicas    ': 'Facultad de Ciencias Astronómicas y Geofísicas',
+    'Facultad de Cs. Agrarias y': 'Facultad de Ciencias Agrarias y Forestales',
+    'Facultad de Bellas': 'Facultad de Bellas Artes',
+    'Facultad de Arquitectura y Urbanismo      ': 'Facultad de Arquitectura y Urbanismo',
+    'Facultad de Ciencias Naturales y Museo (FINALES': 'Facultad de Ciencias Naturales y Museo',
+    'Facultad de Trabajo Social': 'Facultad de Trabajo Social',
+    'Facultad de Psicología': 'Facultad de Psicología',
+    'Facultad de Periodismo y Comunicación Social': 'Facultad de Periodismo y Comunicación Social',
+    'Facultad de Odontología': 'Facultad de Odontología',
+    'Facultad de Ingeniería': 'Facultad de Ingeniería',
+    'Facultad de Informática': 'Facultad de Informática',
+    'Facultad de Humanidades y Ciencias de la Educación': 'Facultad de Humanidades y Ciencias de la Educación',
+    'Facultad de Ciencias Veterinarias': 'Facultad de Ciencias Veterinarias',
+    'Facultad de Ciencias Naturales y Museo': 'Facultad de Ciencias Naturales y Museo',
+    'Facultad de Ciencias Médicas': 'Facultad de Ciencias Médicas',
+    'Facultad de Ciencias Jurídicas y Sociales': 'Facultad de Ciencias Jurídicas y Sociales',
+    'Facultad de Ciencias Exactas': 'Facultad de Ciencias Exactas',
+    'Facultad de Ciencias Económicas': 'Facultad de Ciencias Económicas',
+    'Facultad de Ciencias Astronómicas y Geofísicas': 'Facultad de Ciencias Astronómicas y Geofísicas',
+    'Facultad de Ciencias Agrarias y Forestales': 'Facultad de Ciencias Agrarias y Forestales',
+    'Facultad de Bellas Artes': 'Facultad de Bellas Artes',
+    'Facultad de Arquitectura y Urbanismo': 'Facultad de Arquitectura y Urbanismo',
+    'Facultad de Arquitectura y Urbanismo \xa0 \xa0 \xa0': 'Facultad de Arquitectura y Urbanismo',
+    'Facultad de Cs. Astronómicas y Geofísicas \xa0 \xa0': 'Facultad de Ciencias Astronómicas y Geofísicas',
+    'Facultad de Cs. Económicas \xa0 \xa0': 'Facultad de Ciencias Económicas',
+    'Facultad de Cs. Jurídicas y Sociales \xa0': 'Facultad de Ciencias Jurídicas y Sociales',
+    'Facultad de Humanidades y Cs. de la Educación \xa0': 'Facultad de Humanidades y Ciencias de la Educación',
+    'Facultad de Periodismo y Comunicación Social \xa0 \xa0': 'Facultad de Periodismo y Comunicación Social',
+}
+
+
+UNIVERSITY_GROUP = {
+    'Franja Morada (Lista 3)': 'Franja Morada',
+    '4 Franja Morada': 'Franja Morada',
+    'La Fuente (JUP)': 'La Fuente',
+    '17 La Fuente + Megafón': 'La Fuente',
+    '8 La Fuente': 'La Fuente',
+    'La fuente': 'La Fuente',
+    '133 Franja Morada': 'Franja Morada',
+    '3 Franja Morada + Indep.': 'Franja Morada',
+    '3 Franja Morada': 'Franja Morada',
+    'Franja morada': 'Franja Morada',
+    '1163Franja Morada': 'Franja Morada',
+    'Franja Morada': 'Franja Morada',
+    'La fuente + Megafón': 'La Fuente',
+    'La Fuente': 'La Fuente',
+    'Informática verde': 'Informática Verde',
+    '10 Informáticos Verde': 'Informática Verde',
+    'Informática Verde': 'Informática Verde',
+    'La Tercera posición': 'La Tercera Posición',
+    '3 La Tercera Posición': 'La Tercera Posición',
+    'La Tercera Posición': 'La Tercera Posición',
+    'La tercera Posición': 'La Tercera Posición',
+    'BLancos': 'Blanco',
+    'Blanco/Nulos': 'Blanco',
+    'En Blanco': 'Blanco',
+    'Blanco': 'Blanco',
+    'Blancos': 'Blanco',
+}
+
+
 class PollImporter:
 
     def __init__(self, *args, **kwargs):
@@ -117,11 +199,17 @@ class PollImporter:
         return self.persist_university_school(name_ok)
 
     def persist_university_school(self, name):
-        university, created = UniversitySchool.objects.get_or_create(name=name)
+        normalized_name = UNIVERSITY_SCHOOL[name]
+        university, created = UniversitySchool.objects.get_or_create(name=normalized_name)
         return university
 
     def persist_university_group(self, name):
-        university, created = UniversityGroup.objects.get_or_create(name=name)
+        try:
+            normalized_name = UNIVERSITY_GROUP[name]
+        except Exception:
+            normalized_name = name
+
+        university, created = UniversityGroup.objects.get_or_create(name=normalized_name)
         return university
 
     def persist_poll(

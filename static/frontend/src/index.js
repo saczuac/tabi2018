@@ -168,12 +168,36 @@ const fetchUniversities = _ => {
 const drawStackChart = (polls, university)  => {
 	const years = [2012, 2013, 2014, 2015, 2016, 2017, 2018];
 
-	const pollsPerYear = [];
+	let pollsPerYear = [];
 
-	const pollsPerYearObj = {}
+	let pollsPerYearObj = {};
+
+	let allGroups = [];
 
 	years.forEach(year => {
 		let generalPollYear = getPollsFromYear(year, university);
+
+		let allGroupsFromYear = generalPollYear.map(gpy => gpy.university_group);
+
+		allGroupsFromYear.forEach(g => {
+			if (allGroups.indexOf(g) === -1) {
+				allGroups.push(g);
+				pollsPerYearObj[g] = [];
+
+				let yearsPast = years.indexOf(year);
+
+				for (let i = 0; i < yearsPast; i++) {
+					pollsPerYearObj[g].push(0)
+				}
+			}
+			
+		});
+
+		const groupsNotAppearThisYear = allGroups.filter(g => allGroupsFromYear.indexOf(g) === -1);
+
+		groupsNotAppearThisYear.forEach(g => {
+			pollsPerYearObj[g].push(0); // 0 votes this year
+		})
 
 		generalPollYear.forEach(pollYear => {
 			if (!pollsPerYearObj[pollYear.university_group]) pollsPerYearObj[pollYear.university_group] = [];

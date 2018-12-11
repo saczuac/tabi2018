@@ -11894,8 +11894,35 @@ var drawStackChart = function drawStackChart(polls, university) {
 
 	var pollsPerYearObj = {};
 
+	var allGroups = [];
+
 	years.forEach(function (year) {
 		var generalPollYear = getPollsFromYear(year, university);
+
+		var allGroupsFromYear = generalPollYear.map(function (gpy) {
+			return gpy.university_group;
+		});
+
+		allGroupsFromYear.forEach(function (g) {
+			if (allGroups.indexOf(g) === -1) {
+				allGroups.push(g);
+				pollsPerYearObj[g] = [];
+
+				var yearsPast = years.indexOf(year);
+
+				for (var i = 0; i < yearsPast; i++) {
+					pollsPerYearObj[g].push(0);
+				}
+			}
+		});
+
+		var groupsNotAppearThisYear = allGroups.filter(function (g) {
+			return allGroupsFromYear.indexOf(g) === -1;
+		});
+
+		groupsNotAppearThisYear.forEach(function (g) {
+			pollsPerYearObj[g].push(0); // 0 votes this year
+		});
 
 		generalPollYear.forEach(function (pollYear) {
 			if (!pollsPerYearObj[pollYear.university_group]) pollsPerYearObj[pollYear.university_group] = [];
