@@ -1,6 +1,9 @@
 import os
 import sys
 
+import django_heroku
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = '&9+&&*=^-@g-o688b08fo@rbdytey8q2n5-r&e48^r2ofbot-@'
@@ -120,6 +123,8 @@ REST_FRAMEWORK = {
 }
 
 DATABASE_ROUTERS = ['tabi.db_router.PollRouter', ]
+
+django_heroku.settings(locals())
 
 try:
     from tabi.local_settings import *

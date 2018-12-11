@@ -1,0 +1,1 @@
+web: gunicorn tabi.wsgi --log-file -
