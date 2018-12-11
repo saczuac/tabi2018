@@ -44,6 +44,8 @@ class Poll(models.Model):
         on_delete=models.PROTECT
     )
 
+    year = models.IntegerField(_('Año'))
+
     center_votes = models.IntegerField(_('Votos por centro'))
     cloister_votes = models.IntegerField(_('Votos por claustro'))
 
@@ -53,9 +55,10 @@ class Poll(models.Model):
         db_table = 'h_votos'
 
     def __str__(self):
-        return "{0} - {1}: Centro -> {2}, Claustro -> {3}".format(
+        return "{0} - {1}: Centro -> {2}, Claustro -> {3} || {4}".format(
             self.university_school.name,
             self.university_group.name,
             self.center_votes,
-            self.cloister_votes
+            self.cloister_votes,
+            self.year
         )
