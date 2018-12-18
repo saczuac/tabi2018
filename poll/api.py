@@ -9,6 +9,10 @@ from .serializers import PollSerializer, UniversitySerializer
 
 from django_filters import rest_framework
 
+from django.views.decorators.cache import cache_page
+
+from django.utils.decorators import method_decorator
+
 
 class PollViewSet(viewsets.ModelViewSet):
     queryset = Poll.objects.all()
@@ -20,6 +24,10 @@ class PollViewSet(viewsets.ModelViewSet):
         'university_group__name',
         'university_school__name',
     )
+
+    @method_decorator(cache_page(60 * 60 * 24 * 60))  # 2 Months Cache
+    def dispatch(self, *args, **kwargs):
+        return super(PollViewSet, self).dispatch(*args, **kwargs)
 
 
 class UniversityViewSet(viewsets.ModelViewSet):
