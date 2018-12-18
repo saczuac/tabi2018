@@ -3,6 +3,8 @@ import h from 'hyperscript';
 
 import PollAPIClient from './polls';
 
+import Map from './map';
+
 import Highcharts from 'highcharts';
 
 import Exporting from 'highcharts/modules/exporting';
@@ -25,6 +27,10 @@ $("#graph2-select-year").on('change', function() {
 	selectedYear = this.value;
 
 	drawSecondGraph();
+});
+
+$("#graph4-select-year").on('change', function() {
+	drawMarkersOnMap(this.value);
 });
 
 $("#graph2-select-university").on('change', function() {
@@ -147,8 +153,49 @@ const fetchPolls = _ => {
 
       if (polls) {
       	generalPolls = polls;
+      	// Init with something
+      	drawGeneralPollsFromYear(2012);
+
+      	selectedYear = 2012;
+
+      	drawSecondGraph();
+
+      	drawMarkersOnMap(2012);
       }
+
   })
+}
+
+const drawMarkersOnMap = year => {
+	const winnersPerUniversity = getWinnersInYear(year);
+
+	Map.drawMarkers(winnersPerUniversity.map(w => ([w.latitude, w.longitude, `${w.university_school} (${w.political_block})`])))
+}
+
+const getWinnersInYear = year => {
+	let schoolPoll = {};
+	let winners = [];
+
+	generalPolls.forEach(el => {
+		let school = el['university_school'];
+
+		if (!schoolPoll[school]) schoolPoll[school] = []
+
+		if (el['year'] == year)
+			schoolPoll[school].push(el);
+	});
+
+	Object.keys(schoolPoll).forEach(university => {
+		let max = {'center_votes': 0};
+
+		schoolPoll[university].forEach(el => {
+			if (el.center_votes > max.center_votes) max = el
+		});
+
+		if (max.center_votes != 0) winners.push(max)
+	})
+
+	return winners;
 }
 
 const fetchUniversities = _ => {
@@ -160,7 +207,15 @@ const fetchUniversities = _ => {
 
       if (universities) {
       	generalUniversities = universities;
+      	selectedUniversity = universities[0].name;
+      	drawSecondGraph();
+
+      	setTimeout(_=> {
+	      	selected2University = universities[11].name;
+	      	drawStackChart(generalPolls, selected2University);
+      	}, 5000)
       }
+
   })
 }
 
@@ -272,6 +327,7 @@ const stackChart = (data, title, container) => {
 if (window.location.pathname == '/') {
   fetchPolls();
   fetchUniversities();
+  Map.init();
 } else {
   // Something else
 }
