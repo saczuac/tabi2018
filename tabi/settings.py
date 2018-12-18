@@ -2,7 +2,6 @@ import os
 import sys
 
 from decouple import config
-import dj_database_url
 
 import django_heroku
 
@@ -16,7 +15,22 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ['*']
 
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd85mhjf0hjl8qk',
+        'USER': 'hfipuaemxpgtdv',
+        'PASSWORD': '6011e5733717e3c33f4e60eae0d05c107c2097e806db8816647093b87e33082f',
+        'HOST': 'ec2-54-221-202-191.compute-1.amazonaws.com',
+        'PORT': '5432',
+    },
+    'info_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd4bv18geg5dopp',
+        'USER': 'ahgvobvhyysteh',
+        'PASSWORD': '70de73aa790d2d6aee6503c24e4b0b26dd94ca9e297870ab9ec89fc18d28aac1',
+        'HOST': 'ec2-54-243-150-10.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
 }
 
 LOGIN_URL = 'login'
